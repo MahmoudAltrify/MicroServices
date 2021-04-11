@@ -3,10 +3,13 @@
 namespace App\Exceptions;
 
 use App\Traits\ApiResponser;
+use Exception;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
@@ -16,6 +19,7 @@ use Throwable;
 class Handler extends ExceptionHandler
 {
     use ApiResponser;
+
     /**
      * A list of the exception types that should not be reported.
      *
@@ -33,10 +37,10 @@ class Handler extends ExceptionHandler
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param  \Throwable  $exception
+     * @param Throwable $exception
      * @return void
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function report(Throwable $exception)
     {
@@ -46,11 +50,11 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $exception
-     * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @param Throwable $exception
+     * @return Response|JsonResponse
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function render($request, Throwable $exception)
     {
@@ -80,10 +84,10 @@ class Handler extends ExceptionHandler
 
             return $this->errorResponse($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        if ($exception instanceof ClientException){
+        if ($exception instanceof ClientException) {
             $message = $exception->getResponse()->getBody();
             $code = $exception->getCode();
-            return $this->errorMessage($message,$code);
+            return $this->errorMessage($message, $code);
 
         }
 
